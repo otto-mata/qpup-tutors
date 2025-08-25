@@ -135,16 +135,66 @@ class QuestionPourUnBot(commands.Bot):
                 " Do /ask_question."
             )
             return
-        
-    async def timeup(self, interaction: discord.Interaction, login: str): ...
-    async def start_session(
-        self, interaction: discord.Interaction, session_name: str
-    ): ...
+        self.sql.questions.update_one(self.current_question, {"answered": True})
+        self.current_question = None
+        await interaction.response.send_message("Marked last question as answered")
+
+    async def timeup(self, interaction: discord.Interaction, login: str):
+        if self.current_session is None:
+            await interaction.response.send_message(
+                "Cannot mark a question as timed out while not in a session."
+                " Do /start_session first, then /ask_question."
+            )
+            return
+        if self.current_question is None:
+            await interaction.response.send_message(
+                "Cannot mark a question as timed out, no question have been asked."
+                " Do /ask_question."
+            )
+            return
+        self.sql.questions.update_one(self.current_question, {"timeout": True})
+        self.current_question = None
+        await interaction.response.send_message("Marked last question as timed out")
+
+    async def start_session(self, interaction: discord.Interaction, session_name: str):
+        if self.current_session is not None:
+            await interaction.response.send_message(
+                "Cannot start a session while one is already running. (this is a work in progress)"
+            )
+            return
+        s_entry = self.sql.sessions.create(session_name)
+        if s_entry is None:
+            await interaction.response.send_message(
+                "Fatal: An error occurred while setting up the session. This is unexpected."
+            )
+            return
+        self.current_session = s_entry.id
+        await interaction.response.send_message(
+            f"Started new session with ID '{self.current_session}'"
+        )
+
     async def summarize_session(
-        self, interaction: discord.Interaction, session_name: str
-    ): ...
-    async def tally_session(
-        self, interaction: discord.Interaction, session_name: str
-    ): ...
-    async def show_session(self, interaction: discord.Interaction): ...
-    async def end_session(self, interaction: discord.Interaction): ...
+        self, interaction: discord.Interaction, session_id: str
+    ):
+        await interaction.response.send_message("NotImplemented")
+
+    async def tally_session(self, interaction: discord.Interaction, session_id: str):
+        await interaction.response.send_message("NotImplemented")
+
+    async def show_session(self, interaction: discord.Interaction):
+        await interaction.response.send_message("NotImplemented")
+
+    async def end_session(self, interaction: discord.Interaction):
+        if self.current_session is None:
+            await interaction.response.send_message(
+                "Cannot end session: no session in progress."
+            )
+            return
+        if self.current_question is not None:
+            await interaction.response.send_message(
+                "Cannot end session: a question is still pending an answer."
+            )
+            return
+        self.sql.sessions.update_one(self.current_session, {"finished": True})
+        self.current_session = None
+        await interaction.response.send_message()
