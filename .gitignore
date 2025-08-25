@@ -1,3 +1,5 @@
 config.yml
 venv/
 .env
+__pycache__/
+*.db
