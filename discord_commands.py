@@ -53,7 +53,7 @@ class QuestionPourUnBot(commands.Bot):
             ("end_session", "End the current session", self.end_session),
         ]
         for cmd in commands_object:
-            self.add_command_to_tree(*cmd)
+            self.add_command_to_tree(cmd[0], cmd[1], cmd[2])
         self.run(self.config.discord_token)
 
     def add_command_to_tree(self, cmd_name: str, description: str, f_obj: callable):
@@ -197,4 +197,4 @@ class QuestionPourUnBot(commands.Bot):
             return
         self.sql.sessions.update_one(self.current_session, {"finished": True})
         self.current_session = None
-        await interaction.response.send_message()
+        await interaction.response.send_message("Successfully ended session.")

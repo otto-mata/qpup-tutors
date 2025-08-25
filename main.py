@@ -10,5 +10,6 @@ if __name__ == "__main__":
     Config(os.environ)
     Config().prepare_config_for_intra_client()
     bot = QuestionPourUnBot(Config(), Client42("./config.yml"))
-    client = QuestionPourUnClient(Config())
-    client.start_investigation()
+    bot.startup()
+    # client = QuestionPourUnClient(Config())
+    # client.start_investigation()

@@ -140,7 +140,10 @@ class QuestionRepo:
             return QuestionEntry(qs, entry)
         return None
 
-    def count(self) -> int: ...
+    def count(self) -> int:
+        self.cur.execute("""SELECT * FROM questions""")
+        entries = self.cur.fetchall()
+        return len(entries)
 
     def update_one(self, id: int, values: dict): ...
     def update_many(self, filter: dict, values: dict): ...
@@ -188,10 +191,10 @@ class MicrORM:
         self.conn.execute("PRAGMA foreign_keys = ON;")
         self.cur = self.conn.cursor()
         self.setup()
-        self.question_sources = QuestionSourceRepo(self.conn, self.cur)
-        self.sessions = SessionRepo(self.conn, self.cur)
-        self.questions = QuestionRepo(self.conn, self.cur)
-        self.session_questions = SessionQuestionRepo(self.conn, self.cur)
+        self.question_sources = QuestionSourceRepo(self.conn, self.cur, self)
+        self.sessions = SessionRepo(self.conn, self.cur, self)
+        self.questions = QuestionRepo(self.conn, self.cur, self)
+        self.session_questions = SessionQuestionRepo(self.conn, self.cur, self)
 
     def setup(self):
         LOGGER.info("Setting up db")
