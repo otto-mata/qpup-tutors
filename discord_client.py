@@ -5,7 +5,7 @@ from discord import Embed
 
 from otto_api42.intra import IntraAPIClient
 from config import Config
-from sqlite_repo import SqliteRepository
+from sqlite_repo import MicrORM
 
 
 class QuestionPourUnClient(discord.Client):
