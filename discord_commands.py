@@ -6,6 +6,7 @@ from discord import Embed
 
 from otto_api42.intra import IntraAPIClient
 from config import Config
+from question_service import QuestionService
 from sqlite_repo import MicrORM
 
 
@@ -16,6 +17,9 @@ class QuestionPourUnBot(commands.Bot):
         self.api42 = intra_client
         self.current_session = None
         self.current_question = None
+        self.question_service = QuestionService(
+            self.sql.questions, self.sql.question_sources, self.sql.session_questions
+        )
         super().__init__(command_prefix="!", intents=discord.Intents.all())
 
     def startup(self):
@@ -108,6 +112,14 @@ class QuestionPourUnBot(commands.Bot):
             )
             return
         max_id = self.sql.questions.count()
+        if max_id == 0:
+            await interaction.response.send_message(
+                "No question were setup for this pool. "
+                "Either you did not register any question, "
+                "or there was an unexpected error."
+            )
+            return
+
         random_id = random.randrange(max_id)
         q_entry = self.sql.questions.fetch_one(random_id)
         self.current_question = q_entry.id
@@ -169,6 +181,7 @@ class QuestionPourUnBot(commands.Bot):
             )
             return
         self.current_session = s_entry.id
+        self.question_service.generate_all_for_session(self.current_session)
         await interaction.response.send_message(
             f"Started new session with ID '{self.current_session}'"
         )
