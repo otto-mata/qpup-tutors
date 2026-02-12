@@ -24,7 +24,6 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	// Return user data
 	userData := map[string]any{
 		"id":       session.Values["user_id"],
-		"login":    session.Values["login"],
 		"name":     session.Values["name"],
 		"provider": session.Values["provider"],
 	}

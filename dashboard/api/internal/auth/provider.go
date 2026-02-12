@@ -136,16 +136,14 @@ func (p *Provider) FetchUser(session goth.Session) (goth.User, error) {
 
 func userFromReader(r io.Reader, user *goth.User) error {
 	u := struct {
-		Login    string `json:"login"`
-		FullName string `json:"usual_full_name"`
-		ID       int    `json:"id"`
+		Login string `json:"login"`
+		ID    int    `json:"id"`
 	}{}
 	err := json.NewDecoder(r).Decode(&u)
 	if err != nil {
 		return err
 	}
-	user.NickName = u.Login
-	user.Name = u.FullName
+	user.Name = u.Login
 	user.UserID = strconv.Itoa(u.ID)
 	return nil
 }

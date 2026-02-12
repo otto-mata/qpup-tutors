@@ -1,4 +1,4 @@
-module qpup.ottomata.online/api/auth
+module qpup.ottomata.online/api
 
 go 1.25.6
 
@@ -11,5 +11,6 @@ require (
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/sessions v1.1.1 // indirect
 	github.com/markbates/goth v1.82.0 // indirect
+	github.com/mattn/go-sqlite3 v1.14.33 // indirect
 	golang.org/x/oauth2 v0.27.0 // indirect
 )

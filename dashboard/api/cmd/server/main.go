@@ -10,9 +10,11 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
-	"qpup.ottomata.online/api/auth/internal/auth"
-	"qpup.ottomata.online/api/auth/internal/handlers"
-	"qpup.ottomata.online/api/auth/internal/middleware"
+	"qpup.ottomata.online/api/internal/auth"
+	"qpup.ottomata.online/api/internal/database"
+	"qpup.ottomata.online/api/internal/handlers"
+	"qpup.ottomata.online/api/internal/middleware"
+	"qpup.ottomata.online/api/internal/services"
 )
 
 type AuthResponse struct {
@@ -29,9 +31,13 @@ func main() {
 	err := godotenv.Load()
 
 	if err != nil {
-		log.Fatalf("An error occurred while loading .en file: %s\n", err.Error())
+		log.Fatalf("An error occurred while loading .env file: %s\n", err.Error())
 	}
-
+	db, err := database.NewConnection("demo.db")
+	if err != nil {
+		log.Fatalf("An error occurred while connecting to database: %s\n", err.Error())
+	}
+	services.NewQuestionService(db)
 	store := sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
 	store.Options = &sessions.Options{
 		Path:     "/",
@@ -42,12 +48,14 @@ func main() {
 	gothic.Store = store
 
 	r := mux.NewRouter()
-	r.Use(middleware.Cors)
 	r.Use(middleware.Log)
+	r.Use(middleware.Cors)
 	goth.UseProviders(auth.New(os.Getenv("FT_UID"), os.Getenv("FT_SECRET"), os.Getenv("FT_REDIR")))
 	r.HandleFunc("/auth/{provider}/callback", handlers.Callback).Methods("Get")
 	r.HandleFunc("/auth/{provider}", handlers.Begin).Methods("Get")
 	r.HandleFunc("/api/user", handlers.GetUser).Methods("GET")
 	r.HandleFunc("/api/logout", handlers.Logout).Methods("POST")
+	r.HandleFunc("/api/question", handlers.NewQuestion).Methods("POST", "OPTIONS")
+	r.HandleFunc("/api/question", handlers.GetQuestions).Methods("GET")
 	http.ListenAndServe(":3000", r)
 }
