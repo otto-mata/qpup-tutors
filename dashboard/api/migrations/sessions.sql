@@ -1,0 +1,7 @@
+CREATE TABLE
+	IF NOT EXISTS sessions (
+		id UUID PRIMARY KEY DEFAULT uuidv4 (),
+		created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+		deleted_at TIMESTAMPTZ,
+		updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
+	);

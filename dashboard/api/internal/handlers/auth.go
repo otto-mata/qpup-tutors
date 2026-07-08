@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"log"
+
 	"github.com/markbates/goth/gothic"
 )
 
@@ -12,11 +14,13 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 	user, err := gothic.CompleteUserAuth(w, r)
 	if err != nil {
 		fmt.Fprintln(w, err)
+		log.Println("User auth completion:", err)
 		return
 	}
 	session, err := gothic.Store.Get(r, "auth-session")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 	session.Values["user_id"] = user.UserID
@@ -26,6 +30,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 	err = session.Save(r, w)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 	http.Redirect(w, r, "http://localhost:8080/dashboard", http.StatusFound)

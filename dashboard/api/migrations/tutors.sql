@@ -1,0 +1,9 @@
+CREATE TABLE
+	IF NOT EXISTS tutors (
+		id UUID PRIMARY KEY DEFAULT uuidv4 (),
+		display_name TEXT NOT NULL,
+		remote_id INT NOT NULL,
+		created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+		deleted_at TIMESTAMPTZ,
+		updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
+	);

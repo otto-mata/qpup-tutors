@@ -1,0 +1,10 @@
+CREATE TABLE
+	IF NOT EXISTS users (
+		id UUID PRIMARY KEY DEFAULT uuidv4 (),
+		discord_id INT NOT NULL,
+		login TEXT NOT NULL,
+		remote_id UUID NOT NULL,
+		created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+		deleted_at TIMESTAMPTZ,
+		updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
+	);

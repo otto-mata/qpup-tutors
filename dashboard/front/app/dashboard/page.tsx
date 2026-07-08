@@ -33,15 +33,9 @@ const jsonIsQuestionArray = (data: any): data is Question[] => {
 };
 
 const fetchQuestions = async (): Promise<Question[]> => {
-  const response = await fetch("http://localhost:3000/api/question", {
-    method: "GET",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
+  return new Promise(() => {
+    return [];
   });
-  if (!response.ok) return [];
-  const data = await response.json();
-  if (!jsonIsQuestionArray(data)) return [];
-  return data;
 };
 
 export default function Dashboard() {
