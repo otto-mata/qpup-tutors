@@ -17,7 +17,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 		log.Println("User auth completion:", err)
 		return
 	}
-	session, err := gothic.Store.Get(r, "auth-session")
+	session, err := gothic.Store.Get(r, "AUTH_SESSION")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Println(err)
@@ -33,7 +33,7 @@ func Callback(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	http.Redirect(w, r, "http://localhost:8080/dashboard", http.StatusFound)
+	http.Redirect(w, r, "http://localhost:8888/dashboard", http.StatusFound)
 }
 
 func Begin(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +46,7 @@ func Begin(w http.ResponseWriter, r *http.Request) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	session, err := gothic.Store.Get(r, "auth-session")
+	session, err := gothic.Store.Get(r, "AUTH_SESSION")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

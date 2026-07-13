@@ -1,18 +1,16 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
-	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
+
 	"qpup.ottomata.online/api/internal/auth"
 	"qpup.ottomata.online/api/internal/database"
 	"qpup.ottomata.online/api/internal/handlers"
@@ -54,38 +52,8 @@ func main() {
 	r.Use(middleware.Log)
 	r.Use(middleware.Cors)
 	goth.UseProviders(auth.New(os.Getenv("FT_UID"), os.Getenv("FT_SECRET"), os.Getenv("FT_REDIR")))
-	r.HandleFunc("/auth", func(w http.ResponseWriter, r *http.Request) {
-		queries := r.URL.Query()
-
-		form := url.Values{}
-		form.Add("grant_type", "authorization_code")
-		form.Add("client_id", "auth")
-		form.Add("code", queries.Get("code"))
-		form.Add("redirect_uri", "http://localhost:3000/auth")
-
-		data, err := http.Post(
-			"http://localhost:8080/realms/master/protocol/openid-connect/token",
-			"application/x-www-form-urlencoded",
-			strings.NewReader(form.Encode()),
-		)
-		if err != nil {
-			log.Println(err)
-			w.WriteHeader(500)
-			return
-		}
-		log.Println(data)
-		jData, err := json.MarshalIndent(data.Body, "", " ")
-		if err != nil {
-			log.Println(err)
-			w.WriteHeader(500)
-			return
-		}
-		log.Println(string(jData))
-		w.Header().Add("Content-Type", "application/json")
-		w.Write(jData)
-	}).Methods("Get")
-
-	r.HandleFunc("/auth/{provider}", handlers.Begin).Methods("Get")
+	r.HandleFunc("/{provider}/auth", handlers.Callback).Methods("Get")
+	r.HandleFunc("/{provider}", handlers.Begin).Methods("Get")
 	r.HandleFunc("/api/user", handlers.GetUser).Methods("GET")
 	r.HandleFunc("/api/logout", handlers.Logout).Methods("POST")
 	r.HandleFunc("/api/question", handlers.NewQuestion).Methods("POST", "OPTIONS")

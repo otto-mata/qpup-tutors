@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	authURL         string = "https://api.intra.42.fr/oauth/authorize"
-	tokenURL        string = "https://api.intra.42.fr/oauth/token"
-	endpointProfile string = "https://api.intra.42.fr/v2/me"
+	authURL         string = "http://localhost:8080/realms/master/protocol/openid-connect/auth"
+	tokenURL        string = "http://localhost:8080/realms/master/protocol/openid-connect/token"
+	endpointProfile string = "http://localhost:8080/realms/master/protocol/openid-connect/userinfo"
 )
 
 type Provider struct {
@@ -33,7 +33,7 @@ func New(clientKey, secret, callbackURL string, scopes ...string) *Provider {
 		ClientKey:    clientKey,
 		Secret:       secret,
 		CallbackURL:  callbackURL,
-		providerName: "forty_two",
+		providerName: "keycloak",
 	}
 	p.config = newConfig(p, scopes)
 	return p
@@ -61,9 +61,8 @@ func (p *Provider) BeginAuth(state string) (goth.Session, error) {
 
 func newConfig(provider *Provider, scopes []string) *oauth2.Config {
 	c := &oauth2.Config{
-		ClientID:     provider.ClientKey,
-		ClientSecret: provider.Secret,
-		RedirectURL:  provider.CallbackURL,
+		ClientID:    provider.ClientKey,
+		RedirectURL: provider.CallbackURL,
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  authURL,
 			TokenURL: tokenURL,

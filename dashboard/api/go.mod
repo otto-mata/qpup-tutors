@@ -10,7 +10,12 @@ require (
 	github.com/gorilla/mux v1.6.2 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/sessions v1.1.1 // indirect
+	github.com/k0kubun/pp/v3 v3.5.1 // indirect
 	github.com/markbates/goth v1.82.0 // indirect
+	github.com/mattn/go-colorable v0.1.14 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-sqlite3 v1.14.33 // indirect
 	golang.org/x/oauth2 v0.27.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/text v0.32.0 // indirect
 )

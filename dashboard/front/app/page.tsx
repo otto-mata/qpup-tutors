@@ -5,7 +5,7 @@ import { SmallLogo42 } from "./components/Small42";
 export default function Home() {
   const handleLogin = () => {
     window.location.href =
-      "http://localhost:8080/realms/master/protocol/openid-connect/auth?scope=openid&response_type=code&client_id=auth&redirect_uri=http://localhost:3000/auth";
+      "http://localhost:8080/realms/master/protocol/openid-connect/auth?scope=openid&response_type=code&client_id=auth&redirect_uri=http://localhost:3000/keycloak/auth";
   };
   return (
     <div className="flex flex-col bg-background text-white h-full min-h-screen">
